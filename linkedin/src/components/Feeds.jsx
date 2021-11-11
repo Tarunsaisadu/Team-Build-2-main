@@ -16,6 +16,7 @@ const Feeds = () => {
   const [currentPostId, setCurrentPostId] = useState(undefined);
   const [imageSelected, setImageSelected] = useState(undefined);
   const [image, setImage] = useState("");
+  const [url, setUrl] = useState("");
 
   let inputRef = useRef();
 
@@ -33,23 +34,22 @@ const Feeds = () => {
       setCurrentPostId(event.target.id);
     }
   };
-  const uploadImage = async (e) => {
-    const files = e.target.files;
+  const uploadImage = () => {
     const data = new FormData();
-    data.append("file", files[0]);
-    data.append("upload_preset", "tarun");
-    setLoading(true);
-    const res = await fetch(
-      "https://api.cloudinary.com/v1_1/dkwb5o9fe/image/upload",
-      {
-        method: "POST",
-        body: data,
-      }
-    );
-    const file = await res.json();
 
-    setImage(file.secure_url);
-    setLoading(false);
+    data.append("file", image);
+    data.append("upload_preset", "Tarunsai");
+    data.append("cloud_name", "dkwb509fe");
+
+    fetch("https://api.cloudinary.com/v1_1/dkwb5o9fe/image/upload", {
+      method: "POST",
+      body: data,
+    })
+      .then((resp) => resp.json())
+      .then((data) => {
+        setUrl(data.url);
+      })
+      .catch((err) => console.log(err));
   };
 
   const myUsername = "Tarun sai";
@@ -282,6 +282,7 @@ const Feeds = () => {
                           {post.text}{" "}
                         </span>
                         <div onClick={() => setShowSingle(true)}>
+                          <img src={url} />
                           <img src={post.image} alt="" className="img-fluid" />
                         </div>
                       </Link>
@@ -640,12 +641,10 @@ const Feeds = () => {
                   Upload Image
                 </button> */}
                 <input
-                  style={{ width: "fit-content", marginLeft: "-250px" }}
                   type="file"
-                  placeholder="Upload"
-                  onChange={uploadImage}
-                />
-                <img src={image} style={{ width: "200px" }} />
+                  onChange={(e) => setImage(e.target.files[0])}
+                ></input>
+                <button onClick={uploadImage}>Upload</button>
               </div>
             </div>
           </div>
