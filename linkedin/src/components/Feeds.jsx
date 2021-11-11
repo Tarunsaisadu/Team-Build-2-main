@@ -15,6 +15,7 @@ const Feeds = () => {
   const [loading, setLoading] = useState(false);
   const [currentPostId, setCurrentPostId] = useState(undefined);
   const [imageSelected, setImageSelected] = useState(undefined);
+  const [image, setImage] = useState("");
 
   let inputRef = useRef();
 
@@ -31,6 +32,24 @@ const Feeds = () => {
       console.log(event.target.id);
       setCurrentPostId(event.target.id);
     }
+  };
+  const uploadImage = async (e) => {
+    const files = e.target.files;
+    const data = new FormData();
+    data.append("file", files[0]);
+    data.append("upload_preset", "tarun");
+    setLoading(true);
+    const res = await fetch(
+      "https://api.cloudinary.com/v1_1/dkwb5o9fe/image/upload",
+      {
+        method: "POST",
+        body: data,
+      }
+    );
+    const file = await res.json();
+
+    setImage(file.secure_url);
+    setLoading(false);
   };
 
   const myUsername = "Tarun sai";
@@ -49,7 +68,7 @@ const Feeds = () => {
           method: method[0],
           headers: {
             Authorization:
-              " Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MTM2MzlmNjdiZTZjMTAwMTVmOWRiZDQiLCJpYXQiOjE2MzA5NDM3MzUsImV4cCI6MTYzMjE1MzMzNX0.aqatGQ0--T-ZQWZJQeYBJ0q7JsbxuWlScmsooaM_1ZE",
+              " Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MThjZWFlZTVmMzRhZDAwMTUzOWYxNjEiLCJpYXQiOjE2MzY2MjUxMzQsImV4cCI6MTYzNzgzNDczNH0.NgYMfuCr8iggCo3A2apdsYI5C4c-9L3fNTAnEhj_v80",
           },
         }
       );
@@ -95,7 +114,7 @@ const Feeds = () => {
           headers: {
             "content-Type": "application/json",
             Authorization:
-              " Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MTM2MzlmNjdiZTZjMTAwMTVmOWRiZDQiLCJpYXQiOjE2MzA5NDM3MzUsImV4cCI6MTYzMjE1MzMzNX0.aqatGQ0--T-ZQWZJQeYBJ0q7JsbxuWlScmsooaM_1ZE",
+              " Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MThjZWFlZTVmMzRhZDAwMTUzOWYxNjEiLCJpYXQiOjE2MzY2MjUxMzQsImV4cCI6MTYzNzgzNDczNH0.NgYMfuCr8iggCo3A2apdsYI5C4c-9L3fNTAnEhj_v80",
           },
         }
       );
@@ -127,7 +146,7 @@ const Feeds = () => {
         headers: {
           // "Content-Type": "multipart/form-data",
           Authorization:
-            " Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MTM2MzlmNjdiZTZjMTAwMTVmOWRiZDQiLCJpYXQiOjE2MzA5NDM3MzUsImV4cCI6MTYzMjE1MzMzNX0.aqatGQ0--T-ZQWZJQeYBJ0q7JsbxuWlScmsooaM_1ZE",
+            " Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MThjZWFlZTVmMzRhZDAwMTUzOWYxNjEiLCJpYXQiOjE2MzY2MjUxMzQsImV4cCI6MTYzNzgzNDczNH0.NgYMfuCr8iggCo3A2apdsYI5C4c-9L3fNTAnEhj_v80",
         },
       });
       console.log(data);
@@ -613,13 +632,20 @@ const Feeds = () => {
                 >
                   Update
                 </button>
-                <button
+                {/* <button
                   disabled={!imageSelected || !currentPostId}
                   className="ml-4 mt-2 btn btn-primary"
                   onClick={upload}
                 >
                   Upload Image
-                </button>
+                </button> */}
+                <input
+                  style={{ width: "fit-content", marginLeft: "-250px" }}
+                  type="file"
+                  placeholder="Upload"
+                  onChange={uploadImage}
+                />
+                <img src={image} style={{ width: "200px" }} />
               </div>
             </div>
           </div>
